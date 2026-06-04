@@ -35,8 +35,8 @@
   <如果用私钥：ssh -i ~/.ssh/your-key root@1.2.3.4>
   <如果端口非 22：ssh -p 2222 root@1.2.3.4>
 - 域名：<填，例如 proxy.example.com>
-- 邮箱（Let's Encrypt 注册用，任意有效邮箱）：<填>
 - Trojan 密码（客户端连接用，自己起一个 16 位以上的强密码）：<填>
+- 邮箱（可选；Let's Encrypt 用于发证书到期预警，不填也能装，acme.sh cron 会自动续期）：<填或留空>
 
 请按以下流程执行：
 
@@ -47,7 +47,8 @@
    有占用就告诉我哪个进程占着，让我决定是否停掉
 4. 安装：在 VPS 上直接跑
    curl -fsSL https://raw.githubusercontent.com/MrArcrM/trojan-vps-installer/main/install.sh | \
-     sudo bash -s -- --domain <域名> --password <密码> --email <邮箱>
+     sudo bash -s -- --domain <域名> --password <密码>
+   （如果上面我填了邮箱，命令末尾加 --email <邮箱>）
    实时看输出，任何一步红色 [✗] 都停下来告诉我原因，不要继续往下硬装
 5. 自检：装完后 SSH 到 VPS 跑 `docker ps | grep trojan`（必须 Up）+
    `docker logs trojan --tail 10`（必须有 "trojan service (server) started"）

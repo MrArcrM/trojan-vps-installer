@@ -20,8 +20,7 @@
 curl -fsSL https://raw.githubusercontent.com/MrArcrM/trojan-vps-installer/main/install.sh | \
   sudo bash -s -- \
     --domain proxy.example.com \
-    --password your-strong-password \
-    --email you@example.com
+    --password your-strong-password
 ```
 
 ## 前置条件（脚本帮不了你这部分）
@@ -56,7 +55,7 @@ DNS 配完等 5-10 分钟生效，本机 `dig +short <你的域名> @1.1.1.1` �
 |---|---|---|
 | `--domain` | ✅ | 已指向本 VPS 的域名（A 记录已配） |
 | `--password` | ✅ | Trojan 客户端密码，建议 16+ 字符 |
-| `--email` | ✅ | Let's Encrypt 注册邮箱 |
+| `--email` | ❌ | Let's Encrypt 账户邮箱。**可不填**——LE 接受空邮箱注册，acme.sh cron 自动续期，填邮箱只是收到证书快到期的预警邮件，兜底用 |
 | `--port` | ❌ | trojan 监听端口，默认 443 |
 | `--skip-dns-check` | ❌ | 跳过 DNS 预检（DNS 接管特殊场景用） |
 
