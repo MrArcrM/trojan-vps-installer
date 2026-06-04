@@ -4,7 +4,7 @@
 
 ## 适用场景
 
-- 你想搭一个能稳定访问 Claude / ChatGPT 的代理
+- 你需要一个稳定的科学上网代理
 - 你不想手动装 Docker、签证书、配 cron
 - 你想给朋友一个无痛部署方案
 
@@ -33,6 +33,26 @@ curl -fsSL https://raw.githubusercontent.com/MrArcrM/trojan-vps-installer/main/i
 | 安全组放行 | TCP 80（acme 用）+ TCP 443（trojan 用） |
 
 DNS 配完等 5-10 分钟生效，本机 `dig +short <你的域名> @1.1.1.1` 应该返回 VPS IP，再开装。
+
+### 新手买什么
+
+**VPS（推荐阿里云轻量服务器香港/新加坡/日本地域）**
+
+- 阿里云轻量产品页：<https://www.aliyun.com/product/swas>
+- **地域必须选境外**（香港 / 新加坡 / 日本 / 美国），**绝对不要选境内**（违规且没意义）
+- 1c1g 入门款够用，30-100 元/月，按需选包月/年付
+- 支付方便（支付宝/微信），适合新手
+
+> 国内云海外节点的 IP 段存在被部分海外网站风控的可能（不影响 trojan 通讯本身，影响目标网站登录）。追求最干净 IP 可考虑海外小厂独服（Racknerd / Hetzner / Vultr），更便宜但需要信用卡 + 英文环境。
+
+**域名（任选一家，都能用）**
+
+- 阿里云万网（推荐新手，支付宝/微信付）：<https://wanwang.aliyun.com/>
+- Cloudflare Registrar（按成本价无加价，便宜但要信用卡）：<https://www.cloudflare.com/products/registrar/>
+
+后缀挑 `.xyz` / `.top` / `.online` 这种便宜的 TLD，新注册 5-15 元/年；`.com` 贵一些 60-80 元/年但通用性最好。
+
+> ⚠️ 阿里云万网注册的域名**默认要求实名认证**，等 1-3 天审核通过才能解析。Cloudflare Registrar 不要求实名，付完款立刻能解析，但需要有外汇支付能力。
 
 ## 脚本干了什么
 
@@ -88,7 +108,7 @@ SNI / peer:        <你的域名>
 | `Port 80 occupied` | apache2 / nginx 占着 80 | `systemctl stop apache2 nginx && systemctl disable apache2 nginx` |
 | `acme.sh issue failed` | 安全组没开 80 / DNS 还未生效 | 本机 `nc -zv <VPS IP> 80` 验证可达 |
 | 客户端连不上 | 安全组没开 443 / SNI 错 / 密码错 | 检查防火墙、SNI 字段、密码 |
-| Claude 提示 "Unable to verify your account" | VPS IP 被风控 | 换更干净的 IP（家宽 IP 最稳） |
+| 目标网站登录被拦 / 风控 | VPS IP 段被该网站识别风控 | 换更干净的 IP（海外家宽 IP 最稳） |
 | 看不到 `authenticated` 日志 | 客户端流量没送到 | 检查客户端规则，确认目标走 trojan |
 
 ## 续期
