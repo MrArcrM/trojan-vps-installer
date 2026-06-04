@@ -1,21 +1,23 @@
 # Agent 部署 Prompt（复制 → 填空 → 发给 AI Agent）
 
-把下面这块整段复制，把所有 `<填...>` 替换成你自己的信息，发给 **Claude Code / Cursor / Codex / ChatGPT 任意有终端能力的 Agent**，它就会自动帮你部署。
+把下面这块整段复制，把所有 `<填...>` 替换成你自己的信息，发给 **Claude Code / Cursor / Codex 等能执行 SSH 的 Agent**，它就会自动帮你部署。
 
 ## ⚠️ 发给 Agent 之前你必须先做完这 3 件事
 
 **这 3 步 Agent 帮不了你**（需要你登录控制台 + 等 DNS 生效），先做完再走下面的 Agent 流程：
 
-1. **买好一台 VPS**（推荐 Ubuntu 22.04 / 24.04，1c1g 起，海外节点）
-   - 不要用国内云的境内节点（违法）
-   - 不要用国内云的境外节点（IP 易被风控）
-   - 推荐：海外小厂独服 / Vultr / DigitalOcean / Hetzner / Racknerd
-2. **买好一个域名**（任意 TLD，5-10 元/年的 `.xyz` 也行）
+1. **买好一台 VPS**（推荐 Ubuntu 22.04 / 24.04，1c1g 起，**境外地域**）
+   - **新手推荐**：阿里云轻量服务器 <https://www.aliyun.com/product/swas> — 选**香港 / 新加坡 / 日本**地域，支付宝/微信付款，30-100 元/月
+   - **进阶**：海外小厂独服 / Vultr / DigitalOcean / Hetzner / Racknerd — IP 更干净但要信用卡
+   - ❌ 国内云的境内地域不能用（违规且不能科学上网）
+2. **买好一个域名**（任意 TLD，5-15 元/年的 `.xyz` / `.top` 也行）
+   - 阿里云万网 <https://wanwang.aliyun.com/>（新手推荐，但要等 1-3 天实名审核才能解析）
+   - Cloudflare Registrar <https://www.cloudflare.com/products/registrar/>（按成本价，付完立刻能用，要信用卡）
 3. **配 DNS A 记录**：到域名控制台添加
    - 类型：A
    - 主机记录 / Name：`proxy`（或任意子域名，根域 `@` 也行）
    - 记录值 / Value：VPS 的公网 IP
-   - **如果域名在 Cloudflare**：Proxy status **必须**设成「DNS only」（灰云朵），**不能开橙云朵**（否则 trojan 走不通）
+   - **如果域名 NS 在 Cloudflare**：Proxy status **必须**设成「DNS only」（灰云朵），**不能开橙云朵**（否则 trojan 走不通）
 4. **VPS 控制台安全组放行**：放开 **TCP 80** 和 **TCP 443**（SSH 端口默认已开）
 
 配完 DNS 等 **5-10 分钟**生效，本机跑 `dig +short <你的域名> @1.1.1.1` 应该返回 VPS IP。等返回正确了，再走下面 Agent 流程。
@@ -25,7 +27,7 @@
 ## Agent Prompt（复制下面整段）
 
 ```
-我刚买了一台 VPS 和一个域名，想搭一个 trojan 代理服务（用于科学上网 / 访问 Claude）。
+我刚买了一台 VPS 和一个域名，想搭一个 trojan 代理服务用于科学上网。
 请按照 https://github.com/MrArcrM/trojan-vps-installer 这个仓库的 install.sh 脚本帮我部署。
 
 我的部署参数：
