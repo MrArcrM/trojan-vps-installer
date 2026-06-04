@@ -20,15 +20,17 @@ trojan-vps-installer
 Required:
   --domain <fqdn>      Domain pointing to this VPS (A record, NOT proxied behind CF)
   --password <str>     Trojan client password (16+ chars recommended)
-  --email <addr>       Email for Let's Encrypt registration
 
 Optional:
+  --email <addr>       Email for Let's Encrypt account (gets expiry warnings).
+                       Skip it — acme.sh auto-renews via cron so warnings are
+                       a nice-to-have, not load-bearing.
   --port <n>           Trojan listen port (default: 443)
   --skip-dns-check     Bypass DNS preflight (use only if you know what you're doing)
   -h | --help          Show this help
 
 Example:
-  sudo bash install.sh --domain proxy.example.com --password mySecret123 --email me@example.com
+  sudo bash install.sh --domain proxy.example.com --password mySecret123
 EOF
   exit 0
 }
@@ -53,12 +55,11 @@ die() { err "$*"; exit 1; }
 # --- 0. Preflight: args + root ---
 [[ -z "$DOMAIN"   ]] && die "Missing --domain"
 [[ -z "$PASSWORD" ]] && die "Missing --password"
-[[ -z "$EMAIL"    ]] && die "Missing --email"
 [[ $EUID -ne 0 ]] && die "Must run as root (use sudo)"
 
 log "Domain: $DOMAIN"
 log "Port: $PORT"
-log "Email: $EMAIL"
+[[ -n "$EMAIL" ]] && log "Email: $EMAIL" || log "Email: (not set; skipping LE expiry-warning subscription — cron will auto-renew)"
 
 # --- 1. OS check ---
 . /etc/os-release 2>/dev/null || die "Cannot read /etc/os-release"
@@ -120,7 +121,12 @@ fi
 # --- 6. Install acme.sh ---
 if [[ ! -x /root/.acme.sh/acme.sh ]]; then
   log "Installing acme.sh..."
-  curl -fsSL https://get.acme.sh | sh -s "email=$EMAIL" >/dev/null
+  if [[ -n "$EMAIL" ]]; then
+    curl -fsSL https://get.acme.sh | sh -s "email=$EMAIL" >/dev/null
+  else
+    # acme.sh installer accepts no email; LE registration will use empty account email
+    curl -fsSL https://get.acme.sh | sh >/dev/null
+  fi
   ok "acme.sh installed"
 else
   ok "acme.sh already installed"
